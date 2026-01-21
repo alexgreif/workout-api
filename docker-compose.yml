@@ -9,3 +9,21 @@ services:
       - "8000:8000"
     volumes:
       - ./app:/app/app
+    depends_on:
+      - db
+
+  
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: training
+      POSTGRES_USER: training_user
+      POSTGRES_PASSWORD: training_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/postgres_data
+
+
+volumes:
+  postgres_data:
