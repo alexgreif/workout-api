@@ -7,5 +7,8 @@ dependencies = [
     "pydantic-settings",
 ]
 
+[tool.setuptools]
+packages = ["app"]
+
 [tool.ruff]
 line-length = 88
