@@ -7,6 +7,8 @@ dependencies = [
     "pydantic-settings",
     "sqlalchemy>=2.0",
     "psycopg[binary]",
+    "pydantic[email]",
+    "alembic",
 ]
 
 [tool.setuptools]

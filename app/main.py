@@ -6,7 +6,6 @@ from app.core.database import engine, Base
 
 def create_app() -> FastAPI:
     app = FastAPI(title=settings.app_name)
-
     app.include_router(router)
     return app
 
