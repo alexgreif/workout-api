@@ -8,6 +8,7 @@ from app.schemas.user import UserCreate, UserRead
 from app.repositories.user import (
     UserRepository, UserAlreadyExistsError, UserNotFoundError
 )
+from app.api.dependencies import get_user_repository
 
 router = APIRouter()
 
@@ -19,10 +20,8 @@ router = APIRouter()
         )
 def create_user(
     payload: UserCreate,
-    db: Session = Depends(get_db),
+    repo: UserRepository = Depends(get_user_repository),
 ):
-    repo = UserRepository(db)
-
     try:
         user = repo.create(
         email=payload.email,
@@ -40,10 +39,8 @@ def create_user(
 @router.get("/users/{user_id}", response_model=UserRead)
 def get_user(
     user_id: int,
-    db: Session = Depends(get_db),
+    repo: UserRepository = Depends(get_user_repository),
 ):
-    repo = UserRepository(db)
-
     try:
         return repo.get_by_id(user_id)
     except UserNotFoundError:
