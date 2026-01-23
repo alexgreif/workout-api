@@ -1,11 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
 
 from app.core.database import get_db
 from app.core.security import hash_password
-from app.models.user import User
 from app.schemas.user import UserCreate, UserRead
+
+from app.repositories.user import (
+    UserRepository, UserAlreadyExistsError, UserNotFoundError
+)
 
 router = APIRouter()
 
@@ -19,16 +21,14 @@ def create_user(
     payload: UserCreate,
     db: Session = Depends(get_db),
 ):
-    user = User(
+    repo = UserRepository(db)
+
+    try:
+        user = repo.create(
         email=payload.email,
         password_hash=hash_password(payload.password)
     )
-
-    db.add(user)
-
-    try:
-        db.flush()
-    except IntegrityError:
+    except UserAlreadyExistsError:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Email already exists",
@@ -42,15 +42,15 @@ def get_user(
     user_id: int,
     db: Session = Depends(get_db),
 ):
-    user = db.get(User, user_id)
-    
-    if user is None:
+    repo = UserRepository(db)
+
+    try:
+        return repo.get_by_id(user_id)
+    except UserNotFoundError:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found"
         )
-    
-    return user
 
 
 @router.get("/health")
