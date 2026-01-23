@@ -1,11 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.core.security import hash_password
 from app.schemas.user import UserCreate, UserRead
-from app.repositories.user import (
-    UserRepository, UserAlreadyExistsError, UserNotFoundError
+from app.api.dependencies import get_user_service
+from app.services.user import (
+    UserService, UserAlreadyExistsError, UserNotFoundError
 )
-from app.api.dependencies import get_user_repository
 
 
 router = APIRouter()
@@ -18,29 +17,27 @@ router = APIRouter()
         )
 def create_user(
     payload: UserCreate,
-    repo: UserRepository = Depends(get_user_repository),
+    service: UserService = Depends(get_user_service),
 ):
     try:
-        user = repo.create(
+        return service.register_user(
         email=payload.email,
-        password_hash=hash_password(payload.password)
+        password=payload.password
     )
     except UserAlreadyExistsError:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Email already exists",
         )
-    
-    return user
 
 
 @router.get("/users/{user_id}", response_model=UserRead)
 def get_user(
     user_id: int,
-    repo: UserRepository = Depends(get_user_repository),
+    service: UserService = Depends(get_user_service),
 ):
     try:
-        return repo.get_by_id(user_id)
+        return service.get_user(user_id=user_id)
     except UserNotFoundError:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
