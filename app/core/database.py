@@ -21,13 +21,6 @@ SessionLocal = sessionmaker(
 
 
 def get_db() -> Generator[Session, None, None]:
-    db = SessionLocal()
-    try:
+    with SessionLocal() as db:
         yield db
-        db.commit()
-    except Exception:
-        db.rollback()
-        raise
-    finally:
-        db.close()
         
