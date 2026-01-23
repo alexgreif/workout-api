@@ -1,14 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
 
-from app.core.database import get_db
 from app.core.security import hash_password
 from app.schemas.user import UserCreate, UserRead
-
 from app.repositories.user import (
     UserRepository, UserAlreadyExistsError, UserNotFoundError
 )
 from app.api.dependencies import get_user_repository
+
 
 router = APIRouter()
 
@@ -48,13 +46,3 @@ def get_user(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found"
         )
-
-
-@router.get("/health")
-def health_check():
-    return {"status": "ok"}
-
-
-@router.get("/db-check")
-def db_check(db: Session = Depends(get_db)):
-    return {"db": "connected"}
