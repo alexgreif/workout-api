@@ -15,18 +15,19 @@ class UserService:
         self.user_repo = user_repo
 
     def register_user(self, *, email: str, password: str) -> User:
-        password_hash=hash_password(password)
+        user = User(
+            email=email,
+            password_hash=hash_password(password)
+        )
 
         try:
-            user = self.user_repo.create(
-                email=email,
-                password_hash=password_hash
-            )
+            self.user_repo.create(user=user)
             self.db.commit()
-            return user
         except Exception:
             self.db.rollback()
             raise
+
+        return user
     
     def get_user(self, *, user_id: int) -> User:
         return self.user_repo.get_by_id(user_id)
