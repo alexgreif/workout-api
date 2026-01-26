@@ -24,9 +24,9 @@ class ExerciseRepository:
             role: str
     ) -> None:
         link = ExerciseMuscle(
-        excercise_id=excercise_id,
-        muscle_id=muscle_id,
-        role=role
+            excercise_id=excercise_id,
+            muscle_id=muscle_id,
+            role=role
         )
         self.db.add(link)
     

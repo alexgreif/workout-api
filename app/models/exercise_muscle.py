@@ -25,5 +25,5 @@ class ExerciseMuscle(Base):
         nullable=False
         )
     
-    exercise = relationship("Exercise", back_populates="Muscle")
+    exercise = relationship("Exercise", back_populates="muscle")
     muscle = relationship("Muscle")
