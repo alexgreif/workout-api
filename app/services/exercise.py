@@ -1,0 +1,37 @@
+from sqlalchemy.orm import Session
+
+from app.repositories.exercise import ExerciseRepository
+from app.models.exercise import Exercise
+
+
+class ExerciseService:
+    def __init__(self, db: Session, excercise_repo: ExerciseRepository):
+        self.db = db
+        self.exercise_repo = excercise_repo
+
+    def add_exercise(
+            self,
+            *,
+            name: str,
+            description: str | None,
+            created_by_user_id: int,
+            muscles: list[tuple[int, str]]
+    ) -> Exercise:
+        exercise = Exercise(
+            name=name,
+            description=description,
+            created_by_user_id=created_by_user_id
+        )
+
+        self.exercise_repo.create(exercise)
+
+        for muscle_id, role in muscles:
+            self.exercise_repo.add_muscle(
+                excercise_id=exercise.id,
+                muscle_id=muscle_id,
+                role=role
+            )
+
+        self.db.commit()
+        return exercise
+    
