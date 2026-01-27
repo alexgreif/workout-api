@@ -5,9 +5,9 @@ from app.models.exercise import Exercise
 
 
 class ExerciseService:
-    def __init__(self, db: Session, excercise_repo: ExerciseRepository):
+    def __init__(self, db: Session, exercise_repo: ExerciseRepository):
         self.db = db
-        self.exercise_repo = excercise_repo
+        self.exercise_repo = exercise_repo
 
     def add_exercise(
             self,
@@ -27,7 +27,7 @@ class ExerciseService:
 
         for muscle_id, role in muscles:
             self.exercise_repo.add_muscle(
-                excercise_id=exercise.id,
+                exercise_id=exercise.id,
                 muscle_id=muscle_id,
                 role=role
             )

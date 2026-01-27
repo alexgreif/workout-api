@@ -19,12 +19,12 @@ class ExerciseRepository:
     
     def add_muscle(
             self,
-            excercise_id: int,
+            exercise_id: int,
             muscle_id: int,
             role: str
     ) -> None:
         link = ExerciseMuscle(
-            excercise_id=excercise_id,
+            exercise_id=exercise_id,
             muscle_id=muscle_id,
             role=role
         )
