@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.repositories.exercise import ExerciseRepository
 from app.models.exercise import Exercise
 from app.models.muscle import Muscle
-from app.domain.errors import InvalidMuscleError
+from app.domain.errors import InvalidMuscleError, ExerciseNotFoundError
 
 
 class ExerciseService:
@@ -41,8 +41,13 @@ class ExerciseService:
         return exercise
     
     
-    def get_exercise(self, *, exercise_id: int) -> Exercise | None:
-        return self.exercise_repo.get_by_id(exercise_id=exercise_id)
+    def get_exercise(self, *, exercise_id: int) -> Exercise:
+        exercise = self.exercise_repo.get_by_id(exercise_id)
+
+        if exercise is None:
+            raise ExerciseNotFoundError()
+        
+        return exercise
     
     
     def list_exercises(self) -> list[Exercise]:

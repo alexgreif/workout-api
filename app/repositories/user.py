@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
 from app.models.user import User
-from app.domain.errors import UserAlreadyExistsError, UserNotFoundError
+from app.domain.errors import UserAlreadyExistsError
 
 
 class UserRepository:
@@ -20,9 +20,4 @@ class UserRepository:
         return user
     
     def get_by_id(self, user_id: int) -> User:
-        user = self.db.get(User, user_id)
-
-        if user is None:
-            raise UserNotFoundError()
-        
-        return user
+        return self.db.get(User, user_id)

@@ -4,7 +4,6 @@ from sqlalchemy.orm import Session, selectinload
 from app.models.exercise import Exercise
 from app.models.muscle import Muscle
 from app.models.exercise_muscle import ExerciseMuscle
-from app.domain.errors import ExerciseNotFoundError
 
 
 class ExerciseRepository:
@@ -59,12 +58,7 @@ class ExerciseRepository:
             .where(Exercise.id == exercise_id)
         )
 
-        exercise = self.db.execute(stmt).scalar_one_or_none()
-
-        if exercise is None:
-            raise ExerciseNotFoundError()
-        
-        return exercise
+        return self.db.execute(stmt).scalar_one_or_none()
 
 
     def list_all(self) -> list[Exercise]:

@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.repositories.user import UserRepository
 from app.models.user import User
 from app.core.security import hash_password
+from app.domain.errors import UserNotFoundError
 
 
 class UserService:
@@ -26,4 +27,9 @@ class UserService:
         return user
     
     def get_user(self, *, user_id: int) -> User:
-        return self.user_repo.get_by_id(user_id)
+        user = self.user_repo.get_by_id(user_id)
+
+        if user is None:
+            raise UserNotFoundError()
+        
+        return user
