@@ -1,3 +1,4 @@
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.repositories.exercise import (
@@ -5,6 +6,8 @@ from app.repositories.exercise import (
     ExerciseNotFoundError
     )
 from app.models.exercise import Exercise
+from app.models.muscle import Muscle
+from app.domain.errors import InvalidMuscleError
 
 
 class ExerciseService:
@@ -25,6 +28,14 @@ class ExerciseService:
             description=description,
             created_by_user_id=created_by_user_id
         )
+
+        # Check if all muscles exist
+        muscle_ids = [muscle_id for muscle_id, _ in muscles] 
+        stmt = select(Muscle.id).where(Muscle.id.in_(muscle_ids))
+        existing_ids = self.db.execute(stmt).scalars().all()
+        missing_ids = set(muscle_ids) - set(existing_ids)
+        if missing_ids:
+            raise InvalidMuscleError(missing_ids)
 
         self.exercise_repo.create(exercise)
 
