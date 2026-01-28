@@ -25,16 +25,32 @@ class ExerciseRepository:
             muscle_id: int,
             role: str
     ) -> None:
-        link = ExerciseMuscle(
+        exercise_muscle = ExerciseMuscle(
             exercise_id=exercise_id,
             muscle_id=muscle_id,
             role=role
         )
-        self.db.add(link)
+        self.db.add(exercise_muscle)
+
+
+    def add_muscles(
+            self,
+            exercise_id: int,
+            muscles: list[tuple[int, str]]
+    ) -> None:
+        rows = [
+            ExerciseMuscle(
+                exercise_id=exercise_id,
+                muscle_id=muscle_id,
+                role=role
+            )
+            for muscle_id, role in muscles
+        ]
+        self.db.add_all(rows)
 
 
     def get_by_id(self, exercise_id: int) -> Exercise | None:
-        query = (
+        stmt = (
             select(Exercise)
             .options(
                 selectinload(Exercise.muscles)
@@ -43,7 +59,7 @@ class ExerciseRepository:
             .where(Exercise.id == exercise_id)
         )
 
-        exercise = self.db.execute(query).scalar_one_or_none()
+        exercise = self.db.execute(stmt).scalar_one_or_none()
 
         if exercise is None:
             raise ExerciseNotFoundError()
@@ -52,7 +68,7 @@ class ExerciseRepository:
 
 
     def list_all(self) -> list[Exercise]:
-        query = (
+        stmt = (
             select(Exercise)
             .options(
                 selectinload(Exercise.muscles)
@@ -60,7 +76,7 @@ class ExerciseRepository:
             )
         )
 
-        return self.db.execute(query).scalars().all()
+        return self.db.execute(stmt).scalars().all()
 
 
     

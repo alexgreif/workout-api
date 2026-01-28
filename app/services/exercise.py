@@ -27,23 +27,17 @@ class ExerciseService:
         )
 
         # Check if all muscles exist
-        muscle_ids = [muscle_id for muscle_id, _ in muscles] 
+        muscle_ids = {muscle_id for muscle_id, _ in muscles}
         stmt = select(Muscle.id).where(Muscle.id.in_(muscle_ids))
-        existing_ids = self.db.execute(stmt).scalars().all()
-        missing_ids = set(muscle_ids) - set(existing_ids)
+        existing_ids = set(self.db.execute(stmt).scalars().all())
+        missing_ids = muscle_ids - existing_ids
         if missing_ids:
             raise InvalidMuscleError(missing_ids)
 
         self.exercise_repo.create(exercise)
-
-        for muscle_id, role in muscles:
-            self.exercise_repo.add_muscle(
-                exercise_id=exercise.id,
-                muscle_id=muscle_id,
-                role=role
-            )
-
+        self.exercise_repo.add_muscles(exercise.id, muscles)
         self.db.commit()
+
         return exercise
     
     
