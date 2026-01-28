@@ -53,5 +53,18 @@ class ExerciseRepository:
         
         return exercise
 
+
+    def list_all(self) -> list[Exercise]:
+        query = (
+            select(Exercise)
+            .options(
+                selectinload(Exercise.muscles)
+                .selectinload(ExerciseMuscle.muscle)
+            )
+        )
+
+        return self.db.execute(query).scalars().all()
+
+
     
 

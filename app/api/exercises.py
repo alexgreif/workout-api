@@ -31,7 +31,7 @@ def create_exercise(
 def get_exercise(
     exercise_id: int,
     service: ExerciseService = Depends(get_exercise_service)
-    ):
+):
     try:
         return service.get_exercise(exercise_id=exercise_id)
     except ExerciseNotFoundError:
@@ -39,3 +39,10 @@ def get_exercise(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Exercise not found"
         )
+
+
+@router.get("/", response_model=list[ExerciseRead])
+def list_exercises(
+    service: ExerciseService = Depends(get_exercise_service)
+):
+    return service.list_exercises()

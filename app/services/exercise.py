@@ -38,6 +38,11 @@ class ExerciseService:
         self.db.commit()
         return exercise
     
+    
     def get_exercise(self, *, exercise_id: int) -> Exercise | None:
         return self.exercise_repo.get_by_id(exercise_id=exercise_id)
+    
+    
+    def list_exercises(self) -> list[Exercise]:
+        return self.exercise_repo.list_all()
     
