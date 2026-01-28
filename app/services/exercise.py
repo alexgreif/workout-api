@@ -1,10 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.repositories.exercise import (
-    ExerciseRepository,
-    ExerciseNotFoundError
-    )
+from app.repositories.exercise import ExerciseRepository
 from app.models.exercise import Exercise
 from app.models.muscle import Muscle
 from app.domain.errors import InvalidMuscleError

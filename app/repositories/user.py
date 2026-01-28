@@ -2,14 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
 from app.models.user import User
-
-
-class UserAlreadyExistsError(Exception):
-    pass
-
-
-class UserNotFoundError(Exception):
-    pass
+from app.domain.errors import UserAlreadyExistsError, UserNotFoundError
 
 
 class UserRepository:

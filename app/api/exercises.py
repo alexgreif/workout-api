@@ -2,9 +2,8 @@ from fastapi import APIRouter, Depends, status, HTTPException
 
 from app.schemas.exercise import ExerciseCreate, ExerciseRead
 from app.api.dependencies import get_exercise_service
-from app.services.exercise import (
-    ExerciseService, ExerciseNotFoundError, InvalidMuscleError
-)
+from app.services.exercise import ExerciseService
+from app.domain.errors import ExerciseNotFoundError, InvalidMuscleError
 
 
 router = APIRouter(prefix="/exercises", tags=["exercises"])

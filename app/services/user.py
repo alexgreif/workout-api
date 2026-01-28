@@ -1,10 +1,6 @@
 from sqlalchemy.orm import Session
 
-from app.repositories.user import (
-    UserRepository,
-    UserAlreadyExistsError,
-    UserNotFoundError
-)
+from app.repositories.user import UserRepository
 from app.models.user import User
 from app.core.security import hash_password
 
