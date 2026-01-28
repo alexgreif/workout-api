@@ -15,7 +15,7 @@ class Exercise(Base):
         nullable=False
     )
 
-    muscle = relationship(
+    muscles = relationship(
         "ExerciseMuscle",
         back_populates="exercise",
         cascade="all, delete-orphan"
