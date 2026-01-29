@@ -9,9 +9,14 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - .:/app
+      - ./app:/app/app
+      - ./tests:/app/tests
+      - ./alembic:/app/alembic
+      - ./alembic.ini:/app/alembic.ini
+      - ./.env.app:/app/.env.app
     depends_on:
       - db
+      - db_test
 
   
   db:
@@ -24,6 +29,16 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+
+  db_test:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: training_test
+      POSTGRES_USER: training_user
+      POSTGRES_PASSWORD: training_password
+    ports:
+      - "5433:5432"
 
 
 volumes:
