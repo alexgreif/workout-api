@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict
-from typing import List, Optional
+from typing import List
 
 from app.models.exercise_muscle import MuscleRole
 
@@ -11,7 +11,7 @@ class ExerciseMuscleCreate(BaseModel):
 
 class ExerciseCreate(BaseModel):
     name: str
-    description: str
+    description: str | None = None
     muscles: List[ExerciseMuscleCreate]
 
 
@@ -34,5 +34,5 @@ class ExerciseRead(BaseModel):
 
     id: int
     name: str
-    description: Optional[str]
+    description: str | None
     muscles: List[ExerciseMuscleRead]
