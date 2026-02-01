@@ -18,18 +18,12 @@ def create_exercise(
     payload: ExerciseCreate,
     service: ExerciseService = Depends(get_exercise_service),
 ):
-    try:
-        return service.add_exercise(
-            name=payload.name,
-            description=payload.description,
-            created_by_user_id=1,
-            muscles=[(m.muscle_id, m.role) for m in payload.muscles]
-        )
-    except InvalidMuscleError as e:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
-            detail=str(e)
-        )
+    return service.add_exercise(
+        name=payload.name,
+        description=payload.description,
+        created_by_user_id=1,
+        muscles=[(m.muscle_id, m.role) for m in payload.muscles]
+    )
 
 
 @router.get("/{exercise_id}", response_model=ExerciseRead)
@@ -37,13 +31,7 @@ def get_exercise(
     exercise_id: int,
     service: ExerciseService = Depends(get_exercise_service)
 ):
-    try:
-        return service.get_exercise(exercise_id=exercise_id)
-    except ExerciseNotFoundError:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Exercise not found"
-        )
+    return service.get_exercise(exercise_id=exercise_id)
 
 
 @router.get("/", response_model=list[ExerciseRead])
