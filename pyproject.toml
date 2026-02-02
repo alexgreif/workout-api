@@ -9,6 +9,7 @@ dependencies = [
     "psycopg[binary]",
     "pydantic[email]",
     "alembic",
+    "python-jose[cryptography]"
 ]
 
 [project.optional-dependencies]

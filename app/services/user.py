@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 
 from app.repositories.user import UserRepository
 from app.models.user import User
-from app.core.security import hash_password
+from app.core.passwords import hash_password
 from app.domain.errors import UserNotFoundError
 
 

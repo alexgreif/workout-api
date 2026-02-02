@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, status
 
 from app.schemas.exercise import ExerciseCreate, ExerciseRead
 from app.api.dependencies import get_exercise_service
 from app.services.exercise import ExerciseService
-from app.domain.errors import ExerciseNotFoundError, InvalidMuscleError
+from app.models.user import User
+from app.core.auth import get_current_user
 
 
 router = APIRouter(prefix="/exercises", tags=["exercises"])
@@ -17,11 +18,12 @@ router = APIRouter(prefix="/exercises", tags=["exercises"])
 def create_exercise(
     payload: ExerciseCreate,
     service: ExerciseService = Depends(get_exercise_service),
+    user: User = Depends(get_current_user)
 ):
     return service.add_exercise(
         name=payload.name,
         description=payload.description,
-        created_by_user_id=1,
+        created_by_user_id=user.id,
         muscles=[(m.muscle_id, m.role) for m in payload.muscles]
     )
 

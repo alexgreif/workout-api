@@ -1,9 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 
 from app.schemas.user import UserCreate, UserRead
 from app.api.dependencies import get_user_service
 from app.services.user import UserService
-from app.domain.errors import UserAlreadyExistsError, UserNotFoundError
 
 
 router = APIRouter(prefix="/users", tags=["users"])
