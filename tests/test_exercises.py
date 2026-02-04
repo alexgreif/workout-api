@@ -1,10 +1,10 @@
 from fastapi import status
-from tests.helpers import create_user, create_exercise
+from tests.helpers import create_exercise, get_auth_header
 
 
 class TestCreateExercise:
     def test_create_exercise_without_muscles(self, client):
-        user_id = create_user(client)
+        auth_header = get_auth_header(client)
 
         response = client.post(
             "/exercises",
@@ -13,9 +13,7 @@ class TestCreateExercise:
                 "description": "Bodyweight pushing exercise",
                 "muscles": [],
             },
-            headers={
-                "X-User-Id": str(user_id),
-            },
+            headers=auth_header,
         )
 
         assert response.status_code == status.HTTP_201_CREATED
@@ -26,7 +24,7 @@ class TestCreateExercise:
         assert "id" in data
 
     def test_create_exercise_with_muscles(self, client):
-        user_id = create_user(client)
+        auth_header = get_auth_header(client)
 
         response = client.post(
             "/exercises",
@@ -38,9 +36,7 @@ class TestCreateExercise:
                     {"muscle_id": 2, "role": "secondary"},
                 ],
             },
-            headers={
-                "X-User-Id": str(user_id),
-            },
+            headers=auth_header
         )
 
         assert response.status_code == status.HTTP_201_CREATED
@@ -50,7 +46,7 @@ class TestCreateExercise:
         assert "id" in data
 
     def test_create_exercise_missing_name(self, client):
-        user_id = create_user(client)
+        auth_header = get_auth_header(client)
 
         response = client.post(
             "/exercises",
@@ -58,15 +54,13 @@ class TestCreateExercise:
                 "description": "No name provided",
                 "muscles": [],
             },
-            headers={
-                "X-User-Id": str(user_id),
-            },
+            headers=auth_header
         )
 
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
     def test_create_exercise_invalid_muscle_id(self, client):
-        user_id = create_user(client)
+        auth_header = get_auth_header(client)
 
         response = client.post(
             "/exercises",
@@ -77,15 +71,13 @@ class TestCreateExercise:
                     {"muscle_id": 99999, "role": "primary"},
                 ],
             },
-            headers={
-                "X-User-Id": str(user_id),
-            },
+            headers=auth_header
         )
 
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
     def test_create_exercise_invalid_muscle_role(self, client):
-        user_id = create_user(client)
+        auth_header = get_auth_header(client)
 
         response = client.post(
             "/exercises",
@@ -96,9 +88,7 @@ class TestCreateExercise:
                     {"muscle_id": 1, "role": "tertiary"},
                 ],
             },
-            headers={
-                "X-User-Id": str(user_id),
-            },
+            headers=auth_header
         )
 
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
@@ -106,14 +96,11 @@ class TestCreateExercise:
 
 class TestGetExercises:
     def test_list_exercises(self, client):
-        user_id = create_user(client)
-
         exercise_id = create_exercise(
             client,
             name="Squat",
             description=None,
-            muscles= [{"muscle_id": 4, "role": "primary"}],
-            user=user_id
+            muscles= [{"muscle_id": 4, "role": "primary"}]
         )
 
         response = client.get("/exercises/")
@@ -129,14 +116,11 @@ class TestGetExercises:
 
 class TestGetExercise:
     def test_get_exercise_by_id(self, client):
-        user_id = create_user(client)
-        
         exercise_id = create_exercise(
             client,
             name="Deadlift",
             description="Hip hinge movement",
-            muscles= [],
-            user=user_id
+            muscles= []
         )
 
         response = client.get(f"/exercises/{exercise_id}")
