@@ -61,7 +61,10 @@ def get_auth_header(
         email=EXAMPLE_EMAIL, password=EXAMPLE_PASSWORD,
         invalid=False
     ):
-    create_user(client, email=email, password=password)
+    try:
+        create_user(client, email=email, password=password)
+    except UserNotCreatedError:
+        pass
     token = login_user(client, email=email, password=password)
     if invalid:
         token = "invalid.token"

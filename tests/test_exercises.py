@@ -96,14 +96,31 @@ class TestCreateExercise:
 
 class TestGetExercises:
     def test_list_exercises(self, client):
-        exercise_id = create_exercise(
+        email = "user@example.com"
+        password = "secret123"
+        
+        create_exercise(
             client,
             name="Squat",
             description=None,
-            muscles= [{"muscle_id": 4, "role": "primary"}]
+            muscles=[{"muscle_id": 4, "role": "primary"}],
+            user_email=email,
+            user_password=password
+        )
+        
+        create_exercise(
+            client,
+            name="Deadlift",
+            description=None,
+            muscles=[{"muscle_id": 3, "role": "primary"}],
+            user_email=email,
+            user_password=password
         )
 
-        response = client.get("/exercises/")
+        response = client.get(
+            "/exercises/",
+            headers=get_auth_header(client, email=email, password=password)
+        )
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
@@ -116,14 +133,22 @@ class TestGetExercises:
 
 class TestGetExercise:
     def test_get_exercise_by_id(self, client):
+        email = "user@example.com"
+        password = "secret123"
+
         exercise_id = create_exercise(
             client,
             name="Deadlift",
             description="Hip hinge movement",
-            muscles= []
+            muscles= [],
+            user_email=email,
+            user_password=password
         )
 
-        response = client.get(f"/exercises/{exercise_id}")
+        response = client.get(
+            f"/exercises/{exercise_id}",
+            headers=get_auth_header(client, email=email, password=password)
+        )
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
@@ -132,11 +157,40 @@ class TestGetExercise:
         assert data["id"] == exercise_id
 
     def test_get_exercise_not_found(self, client):
-        response = client.get("/exercises/99999")
+        response = client.get("/exercises/99999", headers=get_auth_header(client))
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
     def test_get_exercise_invalid_id(self, client):
-        response = client.get("/exercises/abc")
+        response = client.get("/exercises/abc", headers=get_auth_header(client))
 
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
+
+    def test_user_cannot_access_other_users_exercise(self, client):
+        user1 = {"email": "user1@example.com", "password": "secret123"}
+        user2 = {"email": "user2@example.com", "password": "secret321"}
+
+        exercise_id = create_exercise(
+            client,
+            name="Deadlift",
+            description="Hip hinge movement",
+            muscles= [],
+            user_email=user1["email"],
+            user_password=user2["password"]
+        )
+
+        other_users_auth_header = get_auth_header(
+            client,
+            email=user2["email"],
+            password=user2["password"]
+        )
+
+        response = client.get(
+            f"/exercises/{exercise_id}",
+            headers=other_users_auth_header
+        )
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+        
