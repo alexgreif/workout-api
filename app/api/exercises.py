@@ -31,13 +31,15 @@ def create_exercise(
 @router.get("/{exercise_id}", response_model=ExerciseRead)
 def get_exercise(
     exercise_id: int,
-    service: ExerciseService = Depends(get_exercise_service)
+    service: ExerciseService = Depends(get_exercise_service),
+    user: User = Depends(get_current_user)
 ):
-    return service.get_exercise(exercise_id=exercise_id)
+    return service.get_exercise(exercise_id=exercise_id, user=user)
 
 
 @router.get("/", response_model=list[ExerciseRead])
 def list_exercises(
-    service: ExerciseService = Depends(get_exercise_service)
+    service: ExerciseService = Depends(get_exercise_service),
+    user: User = Depends(get_current_user)
 ):
-    return service.list_exercises()
+    return service.list_exercises(user=user)

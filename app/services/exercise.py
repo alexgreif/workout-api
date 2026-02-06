@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.repositories.exercise import ExerciseRepository
 from app.models.exercise import Exercise
+from app.models.user import User
 from app.models.muscle import Muscle
 from app.domain.errors import InvalidMuscleError, ExerciseNotFoundError
 
@@ -41,8 +42,11 @@ class ExerciseService:
         return exercise
     
     
-    def get_exercise(self, *, exercise_id: int) -> Exercise:
-        exercise = self.exercise_repo.get_by_id(exercise_id)
+    def get_exercise(self, *, exercise_id: int, user: User) -> Exercise:
+        exercise = self.exercise_repo.get_by_id_and_user_id(
+            exercise_id=exercise_id,
+            user_id=user.id
+        )
 
         if exercise is None:
             raise ExerciseNotFoundError()
@@ -50,6 +54,6 @@ class ExerciseService:
         return exercise
     
     
-    def list_exercises(self) -> list[Exercise]:
-        return self.exercise_repo.list_all()
+    def list_exercises(self, *, user: User) -> list[Exercise]:
+        return self.exercise_repo.list_by_user_id(user.id)
     

@@ -48,30 +48,35 @@ class ExerciseRepository:
         self.db.add_all(rows)
 
 
-    def get_by_id(self, exercise_id: int) -> Exercise | None:
+    def list_by_user_id(self, user_id: int) -> list[Exercise]:
         stmt = (
             select(Exercise)
             .options(
-                selectinload(Exercise.muscles)
-                .selectinload(ExerciseMuscle.muscle)
-            )
-            .where(Exercise.id == exercise_id)
-        )
-
-        return self.db.execute(stmt).scalar_one_or_none()
-
-
-    def list_all(self) -> list[Exercise]:
-        stmt = (
-            select(Exercise)
-            .options(
-                selectinload(Exercise.muscles)
-                .selectinload(ExerciseMuscle.muscle)
+                    selectinload(Exercise.muscles)
+                    .selectinload(ExerciseMuscle.muscle)
+                )
+            .where(
+                Exercise.created_by_user_id == user_id
             )
         )
-
-        return self.db.execute(stmt).scalars().all()
-
-
+        return list(self.db.scalars(stmt))
     
 
+    def get_by_id_and_user_id(
+            self,
+            *,
+            exercise_id: int,
+            user_id: int
+    ) -> Exercise | None:
+        stmt = (
+            select(Exercise)
+            .options(
+                    selectinload(Exercise.muscles)
+                    .selectinload(ExerciseMuscle.muscle)
+                )
+            .where(
+                Exercise.id == exercise_id,
+                Exercise.created_by_user_id == user_id
+            )
+        )
+        return self.db.scalar(stmt)
