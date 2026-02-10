@@ -1,3 +1,4 @@
+from uuid import UUID
 from fastapi import APIRouter, Depends, status
 
 from app.schemas.exercise import ExerciseCreate, ExerciseRead
@@ -30,7 +31,7 @@ def create_exercise(
 
 @router.get("/{exercise_id}", response_model=ExerciseRead)
 def get_exercise(
-    exercise_id: int,
+    exercise_id: UUID,
     service: ExerciseService = Depends(get_exercise_service),
     user: User = Depends(get_current_user)
 ):

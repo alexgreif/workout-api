@@ -22,11 +22,11 @@ def get_current_user(
     )
 
     try:
-        user_id = int(decode_access_token(token))
+        user_id = decode_access_token(token)
     except (JWTError, ValueError):
         raise credentials_exception
     
-    user = db.get(User, int(user_id))
+    user = db.get(User, user_id)
     if user is None:
         raise credentials_exception
     

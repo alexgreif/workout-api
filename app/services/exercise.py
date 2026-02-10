@@ -1,3 +1,4 @@
+from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -18,8 +19,8 @@ class ExerciseService:
             *,
             name: str,
             description: str | None,
-            created_by_user_id: int,
-            muscles: list[tuple[int, str]]
+            created_by_user_id: UUID,
+            muscles: list[tuple[UUID, str]]
     ) -> Exercise:
         exercise = Exercise(
             name=name,
@@ -42,7 +43,7 @@ class ExerciseService:
         return exercise
     
     
-    def get_exercise(self, *, exercise_id: int, user: User) -> Exercise:
+    def get_exercise(self, *, exercise_id: UUID, user: User) -> Exercise:
         exercise = self.exercise_repo.get_by_id_and_user_id(
             exercise_id=exercise_id,
             user_id=user.id

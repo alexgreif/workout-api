@@ -1,3 +1,4 @@
+from uuid import UUID
 from fastapi import APIRouter, Depends, status
 
 from app.schemas.user import UserCreate, UserRead
@@ -25,7 +26,7 @@ def create_user(
 
 @router.get("/{user_id}", response_model=UserRead)
 def get_user(
-    user_id: int,
+    user_id: UUID,
     service: UserService = Depends(get_user_service),
 ):
     return service.get_user(user_id=user_id)

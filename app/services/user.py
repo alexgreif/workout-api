@@ -1,3 +1,4 @@
+from uuid import UUID
 from sqlalchemy.orm import Session
 
 from app.repositories.user import UserRepository
@@ -26,7 +27,7 @@ class UserService:
 
         return user
     
-    def get_user(self, *, user_id: int) -> User:
+    def get_user(self, *, user_id: UUID) -> User:
         user = self.user_repo.get_by_id(user_id)
 
         if user is None:

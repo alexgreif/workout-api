@@ -1,3 +1,4 @@
+from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
@@ -20,8 +21,8 @@ class ExerciseRepository:
     
     def add_muscle(
             self,
-            exercise_id: int,
-            muscle_id: int,
+            exercise_id: UUID,
+            muscle_id: UUID,
             role: str
     ) -> None:
         exercise_muscle = ExerciseMuscle(
@@ -34,8 +35,8 @@ class ExerciseRepository:
 
     def add_muscles(
             self,
-            exercise_id: int,
-            muscles: list[tuple[int, str]]
+            exercise_id: UUID,
+            muscles: list[tuple[UUID, str]]
     ) -> None:
         rows = [
             ExerciseMuscle(
@@ -48,7 +49,7 @@ class ExerciseRepository:
         self.db.add_all(rows)
 
 
-    def list_by_user_id(self, user_id: int) -> list[Exercise]:
+    def list_by_user_id(self, user_id: UUID) -> list[Exercise]:
         stmt = (
             select(Exercise)
             .options(
@@ -65,8 +66,8 @@ class ExerciseRepository:
     def get_by_id_and_user_id(
             self,
             *,
-            exercise_id: int,
-            user_id: int
+            exercise_id: UUID,
+            user_id: UUID
     ) -> Exercise | None:
         stmt = (
             select(Exercise)

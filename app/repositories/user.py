@@ -1,3 +1,4 @@
+from uuid import UUID
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
@@ -19,5 +20,5 @@ class UserRepository:
         
         return user
     
-    def get_by_id(self, user_id: int) -> User:
+    def get_by_id(self, user_id: UUID) -> User:
         return self.db.get(User, user_id)

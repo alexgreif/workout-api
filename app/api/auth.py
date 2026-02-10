@@ -24,5 +24,5 @@ def login(
             detail="Invalid email or password"
         )
     
-    access_token = create_access_token(subject=str(user.id))
+    access_token = create_access_token(user.id)
     return {"access_token": access_token, "token_type": "bearer"}
