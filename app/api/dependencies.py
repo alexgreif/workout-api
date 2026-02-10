@@ -6,6 +6,8 @@ from app.repositories.user import UserRepository
 from app.services.user import UserService
 from app.repositories.exercise import ExerciseRepository
 from app.services.exercise import ExerciseService
+from app.repositories.muscle import MuscleRepository
+from app.services.muscle import MuscleService
 
 
 def get_user_repository(
@@ -29,6 +31,19 @@ def get_exercise_repository(
 
 def get_exercise_service(
         db: Session = Depends(get_db),
-        exercise_repo: UserRepository = Depends(get_exercise_repository)
+        exercise_repo: ExerciseRepository = Depends(get_exercise_repository)
 ) -> ExerciseService:
     return ExerciseService(db, exercise_repo)
+
+
+def get_muscle_repository(
+        db: Session = Depends(get_db)
+) -> MuscleRepository:
+    return MuscleRepository(db)
+
+
+def get_muscle_service(
+        db: Session = Depends(get_db),
+        muscle_repo: MuscleRepository = Depends(get_muscle_repository)
+) -> MuscleService:
+    return MuscleService(db, muscle_repo)
