@@ -52,3 +52,10 @@ def client(db_session):
         yield client
 
     app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def muscle_ids_by_name(client):
+    response = client.get("/muscles/")
+    muscles = response.json()
+    return {muscle["name"]: muscle["id"] for muscle in muscles}

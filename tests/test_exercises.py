@@ -1,3 +1,4 @@
+import uuid
 from fastapi import status
 from tests.helpers import create_exercise, get_auth_header
 
@@ -23,7 +24,7 @@ class TestCreateExercise:
         assert data["description"] == "Bodyweight pushing exercise"
         assert "id" in data
 
-    def test_create_exercise_with_muscles(self, client):
+    def test_create_exercise_with_muscles(self, client, muscle_ids_by_name):
         auth_header = get_auth_header(client)
 
         response = client.post(
@@ -32,8 +33,8 @@ class TestCreateExercise:
                 "name": "Bench Press",
                 "description": "Classic chest exercise",
                 "muscles": [
-                    {"muscle_id": 1, "role": "primary"},
-                    {"muscle_id": 2, "role": "secondary"},
+                    {"muscle_id": muscle_ids_by_name["Chest"], "role": "primary"},
+                    {"muscle_id": muscle_ids_by_name["Triceps"], "role": "secondary"},
                 ],
             },
             headers=auth_header
@@ -68,7 +69,7 @@ class TestCreateExercise:
                 "name": "Invalid Muscle Exercise",
                 "description": None,
                 "muscles": [
-                    {"muscle_id": 99999, "role": "primary"},
+                    {"muscle_id": 1, "role": "primary"},
                 ],
             },
             headers=auth_header
@@ -76,7 +77,7 @@ class TestCreateExercise:
 
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
-    def test_create_exercise_invalid_muscle_role(self, client):
+    def test_create_exercise_invalid_muscle_role(self, client, muscle_ids_by_name):
         auth_header = get_auth_header(client)
 
         response = client.post(
@@ -85,7 +86,7 @@ class TestCreateExercise:
                 "name": "Weird Role Exercise",
                 "description": None,
                 "muscles": [
-                    {"muscle_id": 1, "role": "tertiary"},
+                    {"muscle_id": muscle_ids_by_name["Biceps"], "role": "tertiary"},
                 ],
             },
             headers=auth_header
@@ -95,7 +96,7 @@ class TestCreateExercise:
 
 
 class TestGetExercises:
-    def test_list_exercises(self, client):
+    def test_list_exercises(self, client, muscle_ids_by_name):
         email = "user@example.com"
         password = "secret123"
         
@@ -103,7 +104,7 @@ class TestGetExercises:
             client,
             name="Squat",
             description=None,
-            muscles=[{"muscle_id": 4, "role": "primary"}],
+            muscles=[{"muscle_id": muscle_ids_by_name["Glutes"], "role": "primary"}],
             user_email=email,
             user_password=password
         )
@@ -112,7 +113,7 @@ class TestGetExercises:
             client,
             name="Deadlift",
             description=None,
-            muscles=[{"muscle_id": 3, "role": "primary"}],
+            muscles=[{"muscle_id": muscle_ids_by_name["Lower back"], "role": "primary"}],
             user_email=email,
             user_password=password
         )
@@ -157,7 +158,8 @@ class TestGetExercise:
         assert data["id"] == exercise_id
 
     def test_get_exercise_not_found(self, client):
-        response = client.get("/exercises/99999", headers=get_auth_header(client))
+        fake_id = uuid.uuid4()
+        response = client.get(f"/exercises/{fake_id}", headers=get_auth_header(client))
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 

@@ -1,3 +1,4 @@
+import uuid
 from fastapi import status
 from tests.helpers import create_user
 
@@ -102,7 +103,8 @@ class TestGetUser:
         assert "password_hash" not in data
 
     def test_get_user_not_found(self, client):
-        response = client.get("/users/99999")
+        fake_id = uuid.uuid4()
+        response = client.get(f"/users/{fake_id}")
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
