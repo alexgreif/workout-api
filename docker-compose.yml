@@ -14,7 +14,6 @@ services:
       - ./tests:/app/tests
       - ./alembic:/app/alembic
       - ./alembic.ini:/app/alembic.ini
-      - ./.env.app:/app/.env.app
     depends_on:
       - db
       - db_test
